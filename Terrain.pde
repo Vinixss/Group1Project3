@@ -1,4 +1,5 @@
 import java.util.Map;
+import java.util.ArrayList;
 import java.util.Random;
 
 class Terrain {
@@ -30,10 +31,26 @@ class Terrain {
   //Sets Random Walls, Starting Point, Target Point
   void createMatrix(int rows, int cols) {
     this.matrixData = new int[rows][cols];
+    for(int i = 0; i < rows; i++) {
+      for(int j = 0; j < cols; j++) {
+        this.matrixData[i][j] = 2;
+      }
+     }
+    
     Random random = new Random();
     int randomCol = random.nextInt(cols);
     int randomRow = random.nextInt(rows);
+    
+    //Used to set up wall cells by only counting nodes 2 away
+    int[] dx = { -2, 2, 0, 0};
+    int[] dy = { 0, 0, -2, 2};
+    
+    recursiveMaze(rows, cols, randomRow, randomCol, dx, dy, random);
+    
+    
     //Set Start Randomly
+    randomCol = random.nextInt(cols);
+    randomRow = random.nextInt(rows);
     matrixData[randomRow][randomCol] = -1;
     startCoord[0] = randomRow;
     startCoord[1] = randomCol;
@@ -46,6 +63,7 @@ class Terrain {
     matrixData[randomRow][randomCol] = 1;
 
 
+    /*
     //Set walls randomly (loop count = rows*cols*coverage);
     int wallsToInsert = (int)(rows*cols*this.coverage);
 
@@ -56,6 +74,39 @@ class Terrain {
       if (matrixData[randomRow][randomCol] != -1 && matrixData[randomRow][randomCol] != 1) {
         matrixData[randomRow][randomCol] = 2;
       }
+    }
+    */
+  }
+  
+  void recursiveMaze(int rows, int cols, int currentRow, int currentColumn, int[] dx, int[] dy, Random random) {
+    //Sets the new node to open
+    this.matrixData[currentRow][currentColumn] = 0;
+    
+    //Used to keep track of where we've been
+    ArrayList<Integer> previousDirections = new ArrayList<Integer>(4);
+    int direction;
+    int[] ex = {-1, 1, 0, 0};
+    int[] ey = {0, 0, -1, 1};
+    
+    //Checks all 4 neighbors. If it is valid and hasn't been checked, carve the path and go to that nodde
+    for(int i = 0; i < 4; i++) {
+      direction = random.nextInt(4);
+      
+      while(previousDirections.contains(direction)) {
+        direction = random.nextInt(4);
+      }
+      
+      int nextCol = currentColumn + dx[direction];
+      int nextRow = currentRow + dy[direction];
+      
+      if(( nextCol < 0 || nextCol >= cols ) || ( nextRow < 0 || nextRow >= rows ) || ( this.matrixData[nextRow][nextCol] == 0 )) {
+        previousDirections.add(direction);
+        continue;
+      }
+      
+      matrixData[currentRow + ey[direction]][currentColumn + ex[direction]] = 0;
+      recursiveMaze(rows, cols, nextRow, nextCol, dx, dy, random);
+      previousDirections.add(direction);
     }
   }
 
