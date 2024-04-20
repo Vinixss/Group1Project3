@@ -1,6 +1,26 @@
 import java.util.Map;
 import java.util.ArrayList;
+import java.util.Stack;
 import java.util.Random;
+
+
+class Pair {
+  int y;
+  int x;
+  
+  Pair(int key, int value) {
+    y = key;
+    x = value;
+  }
+  
+  int getY() {
+    return y;
+  }
+  
+  int getX() {
+    return x;
+  }
+}
 
 class Terrain {
   ArrayList<PVector> vertexData;
@@ -45,7 +65,52 @@ class Terrain {
     int[] dx = { -2, 2, 0, 0};
     int[] dy = { 0, 0, -2, 2};
     
-    recursiveMaze(rows, cols, randomRow, randomCol, dx, dy, random);
+    //Used for removing the space between two nodes
+    int[] ex = {-1, 1, 0, 0};
+    int[] ey = {0, 0, -1, 1};
+    ArrayList<Integer> previousDirections = new ArrayList<Integer>(4);
+    
+    //Ensures I can keep track of all nodes
+    Pair node = new Pair(randomRow, randomCol);
+    Pair neighbor;
+    Stack<Pair> nodes = new Stack<Pair>();
+    nodes.push(node);
+    
+    //Randomized DFS
+    while(!(nodes.empty())) {
+      if(previousDirections.size() == 4) {
+        previousDirections.clear();
+        nodes.pop();
+        continue;
+      }
+      
+      int y = nodes.peek().getY();
+      int x = nodes.peek().getX();
+      
+      this.matrixData[y][x] = 0;
+      int direction;
+      direction = random.nextInt(4);
+      
+      while(previousDirections.contains(direction)) {
+        direction = random.nextInt(4);
+      }
+      
+      
+      int nextCol = x + dx[direction];
+      int nextRow = y + dy[direction];
+      
+      if(( nextCol < 0 || nextCol >= cols ) || ( nextRow < 0 || nextRow >= rows ) || this.matrixData[nextRow][nextCol] == 0) {
+        previousDirections.add(direction);
+        continue;
+      }
+      else {
+        previousDirections.clear();
+        this.matrixData[y + ey[direction]][x + ex[direction]] = 0;
+        neighbor = new Pair(nextRow, nextCol);
+        nodes.push(neighbor);
+      }
+    }
+    previousDirections.clear();
     
     
     //Set Start Randomly
@@ -61,53 +126,6 @@ class Terrain {
     targetCoord[0] = randomRow;
     targetCoord[1] = randomCol;
     matrixData[randomRow][randomCol] = 1;
-
-
-    /*
-    //Set walls randomly (loop count = rows*cols*coverage);
-    int wallsToInsert = (int)(rows*cols*this.coverage);
-
-    for (int i = 0; i < wallsToInsert; i++) {
-      randomCol = random.nextInt(cols);
-      randomRow = random.nextInt(rows);
-
-      if (matrixData[randomRow][randomCol] != -1 && matrixData[randomRow][randomCol] != 1) {
-        matrixData[randomRow][randomCol] = 2;
-      }
-    }
-    */
-  }
-  
-  void recursiveMaze(int rows, int cols, int currentRow, int currentColumn, int[] dx, int[] dy, Random random) {
-    //Sets the new node to open
-    this.matrixData[currentRow][currentColumn] = 0;
-    
-    //Used to keep track of where we've been
-    ArrayList<Integer> previousDirections = new ArrayList<Integer>(4);
-    int direction;
-    int[] ex = {-1, 1, 0, 0};
-    int[] ey = {0, 0, -1, 1};
-    
-    //Checks all 4 neighbors. If it is valid and hasn't been checked, carve the path and go to that nodde
-    for(int i = 0; i < 4; i++) {
-      direction = random.nextInt(4);
-      
-      while(previousDirections.contains(direction)) {
-        direction = random.nextInt(4);
-      }
-      
-      int nextCol = currentColumn + dx[direction];
-      int nextRow = currentRow + dy[direction];
-      
-      if(( nextCol < 0 || nextCol >= cols ) || ( nextRow < 0 || nextRow >= rows ) || ( this.matrixData[nextRow][nextCol] == 0 )) {
-        previousDirections.add(direction);
-        continue;
-      }
-      
-      matrixData[currentRow + ey[direction]][currentColumn + ex[direction]] = 0;
-      recursiveMaze(rows, cols, nextRow, nextCol, dx, dy, random);
-      previousDirections.add(direction);
-    }
   }
 
   //Reads matrixData and creates arraylist of Cell objects
@@ -156,7 +174,7 @@ class Terrain {
     this.targetCoord[0] = rows-1;
     this.targetCoord[1] = cols -1;
     this.clearTerrain();
-    this.coverage = (float)sliderCoverage.getValue();
+    //this.coverage = (float)sliderCoverage.getValue();
     this.createMatrix(rows, cols);
     this.generateGridData();
     this.bfsOverlay = false;

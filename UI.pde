@@ -27,6 +27,7 @@ void loadSliders() {
     .setValue(20)
     ;
 
+/*
   //Slider for controlling col count 1-100
   sliderCoverage = cp5.addSlider("sliderCoverage")
     .setPosition(leftColumn, 75)
@@ -36,6 +37,7 @@ void loadSliders() {
     .setDecimalPrecision(2)
     .setValue(.20)
     ;
+*/
 
   //Button to generate terrain
   generateBtn = cp5.addButton("GENERATE")

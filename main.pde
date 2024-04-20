@@ -3,7 +3,7 @@ ControlP5 cp5;
 
 
 //UI Components
-Slider sliderRows, sliderCols, sliderCoverage;
+Slider sliderRows, sliderCols;
 Button generateBtn, bfsBtn, dfsBtn;
 Camera orbitCamera = new Camera();
 Terrain terrain = new Terrain();
@@ -15,6 +15,8 @@ void setup()
   size(1200, 1200, P3D);
   pixelDensity(2);
   cp5 = new ControlP5(this);
+  windowResizable(true);
+  windowMove(600, 0);
 
   loadSliders();
   terrain.reloadTerrain();
