@@ -58,4 +58,22 @@ void loadSliders() {
     .setPosition(leftColumn, 160)
     .setSize(80, 30)
     ;
+    
+  turnBtn = cp5.addButton("CORNER TURNS")
+    .setValue(0)
+    .setPosition(leftColumn, 190)
+    .setSize(80, 30)
+    ;
+    
+  splitBtn = cp5.addButton("DECISION SPLITS")
+    .setValue(0)
+    .setPosition(leftColumn, 220)
+    .setSize(80, 30)
+    ;
+    
+  endBtn = cp5.addButton("DEAD ENDS")
+    .setValue(0)
+    .setPosition(leftColumn, 250)
+    .setSize(80, 30)
+    ;
 }

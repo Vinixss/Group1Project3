@@ -26,6 +26,7 @@ class Terrain {
   ArrayList<PVector> vertexData;
   int[][] matrixData;
   ArrayList<Cell> cellsData;
+  JunctionPath junctions;
   float gridSize;
   int rows;
   int cols;
@@ -34,6 +35,9 @@ class Terrain {
   float coverage;
   boolean bfsOverlay = false;
   boolean dfsOverlay = false;
+  boolean turnView = false;
+  boolean splitView = false;
+  boolean endView = false;
 
   Terrain() {
     this.gridSize = 80;
@@ -41,6 +45,7 @@ class Terrain {
     this.cols = 370;
     this.vertexData = new ArrayList<PVector>();
     this.cellsData = new ArrayList<Cell>();
+    this.junctions = new JunctionPath();
     this.coverage = 0.2f;
   }
 
@@ -119,6 +124,8 @@ class Terrain {
     matrixData[randomRow][randomCol] = -1;
     startCoord[0] = randomRow;
     startCoord[1] = randomCol;
+    
+    junctions.setStart(randomRow, randomCol);
 
     //Set End Randomly
     randomCol = random.nextInt(cols);
@@ -126,6 +133,8 @@ class Terrain {
     targetCoord[0] = randomRow;
     targetCoord[1] = randomCol;
     matrixData[randomRow][randomCol] = 1;
+    
+    junctions.setEnd(randomRow, randomCol);
   }
 
   //Reads matrixData and creates arraylist of Cell objects
@@ -142,10 +151,127 @@ class Terrain {
         if (matrixData[row][col] == 2) {
           newCell.value = 2;
         }
+        else {
+          if (row + 1 != rows) {
+            if (matrixData[row+1][col] == 0 || matrixData[row+1][col] == 1 || matrixData[row+1][col] == -1) {
+              if (col + 1 != cols) {
+                if (matrixData[row][col+1] == 0 || matrixData[row][col+1] == 1 || matrixData[row][col+1] == -1) {
+                  newCell.turn = true;
+                }
+              }
+              if (col != 0) {
+                if (matrixData[row][col-1] == 0 || matrixData[row][col-1] == 1 || matrixData[row][col-1] == -1) {
+                  if (newCell.turn) {
+                    newCell.split = true;
+                  }
+                  else {
+                    newCell.turn = true;
+                  }
+                }
+              }
+            }
+            else if (matrixData[row+1][col] == 2) {
+              if (col + 1 != cols) {
+                if (col != 0) {
+                  if (matrixData[row][col-1] == 2 && matrixData[row][col+1] == 2) {
+                    newCell.deadEnd = true;
+                  }
+                  else if (row != 0) {
+                    if (matrixData[row-1][col] == 2 && (matrixData[row][col+1] == 2 || matrixData[row][col-1] == 2)) {
+                      newCell.deadEnd = true;
+                    }
+                  }
+                }
+                else if (col == 0) {
+                  if (matrixData[row][col+1] == 2) {
+                    newCell.deadEnd = true;
+                  }
+                  else if (row == 0) {
+                    newCell.deadEnd = true;
+                  }
+                  else if (matrixData[row-1][col] == 2) {
+                    newCell.deadEnd = true;
+                  }
+                }
+              }
+              else if (matrixData[row][col-1] == 2) {
+                newCell.deadEnd = true;
+              }
+              else if (row == 0) {
+                newCell.deadEnd = true;
+              }
+              else if (matrixData[row-1][col] == 2) {
+                newCell.deadEnd = true;
+              }
+            }
+          }
+          if (row != 0) {
+            if (matrixData[row-1][col] == 0 || matrixData[row-1][col] == 1 || matrixData[row-1][col] == -1) {
+              if (col + 1 != cols) {
+                if (matrixData[row][col+1] == 0 || matrixData[row][col+1] == 1 || matrixData[row][col+1] == -1) {
+                  if (newCell.turn) {
+                    newCell.split = true;
+                  }
+                  else {
+                    newCell.turn = true;
+                  }
+                }
+              }
+              if (col != 0) {
+                if (matrixData[row][col-1] == 0 || matrixData[row][col-1] == 1 || matrixData[row][col-1] == -1) {
+                  if (newCell.turn) {
+                    newCell.split = true;
+                  }
+                  else {
+                    newCell.turn = true;
+                  }
+                }
+              }
+            }
+            else if (matrixData[row-1][col] == 2) {
+              if (col + 1 != cols) {
+                if (col != 0) {
+                  if (matrixData[row][col-1] == 2 && matrixData[row][col+1] == 2) {
+                    newCell.deadEnd = true;
+                  }
+                  else if (row + 1 != rows) {
+                    if (matrixData[row+1][col] == 2 && (matrixData[row][col+1] == 2 || matrixData[row][col-1] == 2)) {
+                      newCell.deadEnd = true;
+                    }
+                  }
+                }
+                else if (col == 0) {
+                  if (matrixData[row][col+1] == 2) {
+                    newCell.deadEnd = true;
+                  }
+                  else if (row + 1 == rows) {
+                    newCell.deadEnd = true;
+                  }
+                  else if (matrixData[row+1][col] == 2) {
+                    newCell.deadEnd = true;
+                  }
+                }
+              }
+              else if (matrixData[row][col-1] == 2) {
+                newCell.deadEnd = true;
+              }
+              else if (row + 1 == rows) {
+                newCell.deadEnd = true;
+              }
+              else if (matrixData[row+1][col] == 2) {
+                newCell.deadEnd = true;
+              }
+            }
+          }
+        }
         //May have to convert to a set , to be able to access in dfs, bfs
         cellsData.add(newCell);
+        if (newCell.turn) {
+          junctions.addCell(newCell, row, col);
+        }
       }
     }
+    junctions.created = true;
   }
 
   //Loops through ellsData and draws each cell
@@ -153,6 +279,9 @@ class Terrain {
     for (int i = 0; i < cellsData.size(); i++) {
 
       Cell currentCell = cellsData.get(i);
+      currentCell.seeTurn = turnView;
+      currentCell.seeSplit = splitView;
+      currentCell.seeDeadEnd = endView;
       currentCell.drawCell();
 
       fill(255, 0, 0);

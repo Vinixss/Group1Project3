@@ -4,7 +4,7 @@ ControlP5 cp5;
 
 //UI Components
 Slider sliderRows, sliderCols;
-Button generateBtn, bfsBtn, dfsBtn;
+Button generateBtn, bfsBtn, dfsBtn, turnBtn, splitBtn, endBtn;
 Camera orbitCamera = new Camera();
 Terrain terrain = new Terrain();
 BFS bfs;
@@ -37,6 +37,33 @@ void draw()
 
     bfs = new BFS(terrain.cellsData, terrain.rows, terrain.cols, terrain.startCoord[0], terrain.startCoord[1]);
     dfs = new DFS(terrain.cellsData, terrain.rows, terrain.cols, terrain.startCoord[0], terrain.startCoord[1]);
+  }
+  if (turnBtn.isPressed()) {
+    terrain.reloadGrid();
+    if (terrain.turnView == false) {
+      terrain.turnView = true;
+    }
+    else if (terrain.turnView == true) {
+      terrain.turnView = false;
+    }
+  }
+  if (splitBtn.isPressed()) {
+    terrain.reloadGrid();
+    if (terrain.splitView == false) {
+      terrain.splitView = true;
+    }
+    else if (terrain.splitView == true) {
+      terrain.splitView = false;
+    }
+  }
+  if (endBtn.isPressed()) {
+    terrain.reloadGrid();
+    if (terrain.endView == false) {
+      terrain.endView = true;
+    }
+    else if (terrain.endView == true) {
+      terrain.endView = false;
+    }
   }
   if (bfsBtn.isPressed()) {
     terrain.reloadGrid();

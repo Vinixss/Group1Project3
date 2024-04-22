@@ -7,6 +7,12 @@ class Cell {
   boolean current;
   boolean processed;
   boolean dfs;
+  boolean turn;
+  boolean split;
+  boolean deadEnd;
+  boolean seeTurn;
+  boolean seeSplit;
+  boolean seeDeadEnd;
   
   Cell(float x, float y, float z) {
     this.position = new PVector(x,y,z);
@@ -15,6 +21,12 @@ class Cell {
     this.processed = false;
     this.start = false;
     this.target = false;
+    this.turn = false;
+    this.split = false;
+    this.deadEnd = false;
+    this.seeTurn = false;
+    this.seeSplit = false;
+    this.seeDeadEnd = false;
     //this.current = false;
     //this.dfs = false;
   }
@@ -30,6 +42,15 @@ class Cell {
     }
     if (this.value == 2) {
       fill(0, 0,0);
+    }
+    if (this.seeTurn && this.turn && !this.visited) {
+      fill(205, 20, 222);
+    }
+    if (this.seeSplit && this.split && !this.visited) {
+      fill(245, 113, 32);
+    }
+    if (this.seeDeadEnd && this.deadEnd && !this.visited) {
+      fill(145, 145, 145);
     }
     if (this.processed) {
       fill(255,140,100);
