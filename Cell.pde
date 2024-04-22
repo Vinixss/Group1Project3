@@ -1,5 +1,6 @@
 class Cell {
   PVector position;
+  int[] directions;
   int value;
   boolean visited;
   boolean start;
@@ -16,6 +17,7 @@ class Cell {
   
   Cell(float x, float y, float z) {
     this.position = new PVector(x,y,z);
+    this.directions = new int[]{0,0,0,0};
     this.value = 0;
     this.visited = false;
     this.processed = false;
@@ -29,6 +31,18 @@ class Cell {
     this.seeDeadEnd = false;
     //this.current = false;
     //this.dfs = false;
+  }
+  
+  void setDir(int direction) {
+    directions[direction] = 1;
+  }
+  
+  int dirNum() {
+    int sum = 0;
+    for (int i = 0; i < directions.length; i++) {
+      sum += directions[i];
+    }
+    return sum;
   }
   
   //Set cell colors based on attributes

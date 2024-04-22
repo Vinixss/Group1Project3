@@ -153,6 +153,45 @@ class Terrain {
         }
         else {
           if (row + 1 != rows) {
+            if (matrixData[row+1][col] != 2) {
+              newCell.setDir(0);
+            }
+          }
+          if (row != 0) {
+            if (matrixData[row-1][col] != 2) {
+              newCell.setDir(1);
+            }
+          }
+          if (col + 1 != cols) {
+            if (matrixData[row][col+1] != 2) {
+              newCell.setDir(2);
+            }
+          }
+          if (col != 0) {
+            if (matrixData[row][col-1] != 2) {
+              newCell.setDir(3);
+            }
+          }
+          if (newCell.dirNum() == 1) {
+            newCell.deadEnd = true;
+          }
+          else if (newCell.dirNum() == 2) {
+            if (newCell.directions[0] != newCell.directions[1]) {
+              newCell.turn = true;
+            }
+          }
+          else if (newCell.dirNum() == 3) {
+            newCell.turn = true;
+            newCell.split = true;
+          }
+          else if (newCell.dirNum() == 4) {
+            newCell.turn = true;
+            newCell.split = true;
+          }
+        }
+        
+/*        else {
+          if (row + 1 != rows) {
             if (matrixData[row+1][col] == 0 || matrixData[row+1][col] == 1 || matrixData[row+1][col] == -1) {
               if (col + 1 != cols) {
                 if (matrixData[row][col+1] == 0 || matrixData[row][col+1] == 1 || matrixData[row][col+1] == -1) {
@@ -263,10 +302,10 @@ class Terrain {
               }
             }
           }
-        }
+        } */
         //May have to convert to a set , to be able to access in dfs, bfs
         cellsData.add(newCell);
-        if (newCell.turn) {
+        if (newCell.turn || newCell.deadEnd) {
           junctions.addCell(newCell, row, col);
         }
       }
