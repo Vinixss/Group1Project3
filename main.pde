@@ -40,12 +40,7 @@ void draw()
   }
   if (turnBtn.isPressed()) {
     terrain.reloadGrid();
-    if (terrain.turnView == false) {
-      terrain.turnView = true;
-    }
-    else if (terrain.turnView == true) {
-      terrain.turnView = false;
-    }
+    terrain.turnView = !(terrain.turnView);
   }
   if (splitBtn.isPressed()) {
     terrain.reloadGrid();
@@ -108,6 +103,15 @@ void draw()
 void keyReleased() {
   if (key == 'a') {
     dfs.traverse();
+  }
+  if (key == 't') {
+    terrain.turnView = !(terrain.turnView);
+  }
+  if (key == 'e') {
+    terrain.endView = !(terrain.endView);
+  }
+  if (key == 'd') {
+    terrain.splitView = !(terrain.splitView);
   }
 }
 
