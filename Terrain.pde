@@ -121,6 +121,10 @@ class Terrain {
     //Set Start Randomly
     randomCol = random.nextInt(cols);
     randomRow = random.nextInt(rows);
+    while ( matrixData[randomRow][randomCol] == 2 ) {
+      randomCol = random.nextInt(cols);
+      randomRow = random.nextInt(rows);
+    }
     matrixData[randomRow][randomCol] = -1;
     startCoord[0] = randomRow;
     startCoord[1] = randomCol;
@@ -130,6 +134,11 @@ class Terrain {
     //Set End Randomly
     randomCol = random.nextInt(cols);
     randomRow = random.nextInt(rows);
+    while ( matrixData[randomRow][randomCol] == 2 || matrixData[randomRow][randomCol] == -1) {
+      randomCol = random.nextInt(cols);
+      randomRow = random.nextInt(rows);
+    }
+    
     targetCoord[0] = randomRow;
     targetCoord[1] = randomCol;
     matrixData[randomRow][randomCol] = 1;
@@ -152,118 +161,158 @@ class Terrain {
           newCell.value = 2;
         }
         else {
-          if (row + 1 != rows) {
-            if (matrixData[row+1][col] == 0 || matrixData[row+1][col] == 1 || matrixData[row+1][col] == -1) {
-              if (col + 1 != cols) {
-                if (matrixData[row][col+1] == 0 || matrixData[row][col+1] == 1 || matrixData[row][col+1] == -1) {
-                  newCell.turn = true;
-                }
+          
+          //If we are at the top row===================================================================================
+          if( row == 0 ) {
+            if( col == 0) {
+              if( (matrixData[row + 1][col] == 0 || matrixData[row + 1][col] == 1 || matrixData[row + 1][col] == -1) 
+                && (matrixData[row][col + 1] == 0 || matrixData[row][col + 1] == 1 || matrixData[row][col + 1] == -1)) {
+                
+                newCell.turn = true;
               }
-              if (col != 0) {
-                if (matrixData[row][col-1] == 0 || matrixData[row][col-1] == 1 || matrixData[row][col-1] == -1) {
-                  if (newCell.turn) {
-                    newCell.split = true;
-                  }
-                  else {
-                    newCell.turn = true;
-                  }
-                }
+              else {
+                newCell.deadEnd = true;
+              }
+              
+            }
+            
+            else if ( col == cols - 1 ) {
+              if( (matrixData[row + 1][col] == 0 || matrixData[row + 1][col] == 1 || matrixData[row + 1][col] == -1) 
+                && (matrixData[row][col - 1] == 0 || matrixData[row][col - 1] == 1 || matrixData[row][col - 1] == -1)) {
+                
+                newCell.turn = true;
+              }
+              else {
+                newCell.deadEnd = true;
               }
             }
-            else if (matrixData[row+1][col] == 2) {
-              if (col + 1 != cols) {
-                if (col != 0) {
-                  if (matrixData[row][col-1] == 2 && matrixData[row][col+1] == 2) {
-                    newCell.deadEnd = true;
-                  }
-                  else if (row != 0) {
-                    if (matrixData[row-1][col] == 2 && (matrixData[row][col+1] == 2 || matrixData[row][col-1] == 2)) {
-                      newCell.deadEnd = true;
-                    }
-                  }
-                }
-                else if (col == 0) {
-                  if (matrixData[row][col+1] == 2) {
-                    newCell.deadEnd = true;
-                  }
-                  else if (row == 0) {
-                    newCell.deadEnd = true;
-                  }
-                  else if (matrixData[row-1][col] == 2) {
-                    newCell.deadEnd = true;
-                  }
-                }
+            
+            else {
+              if((matrixData[row + 1][col] == 0 || matrixData[row + 1][col] == 1 || matrixData[row + 1][col] == -1) 
+                && (matrixData[row][col + 1] == 0 || matrixData[row][col + 1] == 1 || matrixData[row][col + 1] == -1) 
+                && (matrixData[row][col - 1] == 0 || matrixData[row][col - 1] == 1 || matrixData[row][col - 1] == -1)) {
+                
+                newCell.split = true;
               }
-              else if (matrixData[row][col-1] == 2) {
+              else if ((matrixData[row + 1][col] == 2 && matrixData[row][col + 1] == 2) 
+                || (matrixData[row + 1][col] == 2 && matrixData[row][col - 1] == 2) 
+                || (matrixData[row][col - 1] == 2 && matrixData[row][col + 1] == 2)) {
+              
                 newCell.deadEnd = true;
               }
-              else if (row == 0) {
-                newCell.deadEnd = true;
-              }
-              else if (matrixData[row-1][col] == 2) {
-                newCell.deadEnd = true;
+              else if (matrixData[row][col - 1] == 2 || matrixData[row][col + 1] == 2){
+                newCell.turn = true;
               }
             }
           }
-          if (row != 0) {
-            if (matrixData[row-1][col] == 0 || matrixData[row-1][col] == 1 || matrixData[row-1][col] == -1) {
-              if (col + 1 != cols) {
-                if (matrixData[row][col+1] == 0 || matrixData[row][col+1] == 1 || matrixData[row][col+1] == -1) {
-                  if (newCell.turn) {
-                    newCell.split = true;
-                  }
-                  else {
-                    newCell.turn = true;
-                  }
-                }
+          
+          
+          //if we are at the bottom row=====================================================================================================================================
+          else if (row == rows - 1) {
+            if( col == 0) {
+              if( (matrixData[row - 1][col] == 0 || matrixData[row - 1][col] == 1 || matrixData[row - 1][col] == -1) 
+                && (matrixData[row][col + 1] == 0 || matrixData[row][col + 1] == 1 || matrixData[row][col + 1] == -1)) {
+                
+                newCell.turn = true;
               }
-              if (col != 0) {
-                if (matrixData[row][col-1] == 0 || matrixData[row][col-1] == 1 || matrixData[row][col-1] == -1) {
-                  if (newCell.turn) {
-                    newCell.split = true;
-                  }
-                  else {
-                    newCell.turn = true;
-                  }
-                }
+              else {
+                newCell.deadEnd = true;
+              }
+              
+            }
+            
+            else if ( col == cols - 1 ) {
+              if( (matrixData[row - 1][col] == 0 || matrixData[row - 1][col] == 1 || matrixData[row - 1][col] == -1) 
+                && (matrixData[row][col - 1] == 0 || matrixData[row][col - 1] == 1 || matrixData[row][col - 1] == -1)) {
+                newCell.turn = true;
+              }
+              else {
+                newCell.deadEnd = true;
               }
             }
-            else if (matrixData[row-1][col] == 2) {
-              if (col + 1 != cols) {
-                if (col != 0) {
-                  if (matrixData[row][col-1] == 2 && matrixData[row][col+1] == 2) {
-                    newCell.deadEnd = true;
-                  }
-                  else if (row + 1 != rows) {
-                    if (matrixData[row+1][col] == 2 && (matrixData[row][col+1] == 2 || matrixData[row][col-1] == 2)) {
-                      newCell.deadEnd = true;
-                    }
-                  }
-                }
-                else if (col == 0) {
-                  if (matrixData[row][col+1] == 2) {
-                    newCell.deadEnd = true;
-                  }
-                  else if (row + 1 == rows) {
-                    newCell.deadEnd = true;
-                  }
-                  else if (matrixData[row+1][col] == 2) {
-                    newCell.deadEnd = true;
-                  }
-                }
+            
+            else {
+              if((matrixData[row - 1][col] == 0 || matrixData[row - 1][col] == 1 || matrixData[row - 1][col] == -1) 
+                && (matrixData[row][col + 1] == 0 || matrixData[row][col + 1] == 1 || matrixData[row][col + 1] == -1) 
+                && (matrixData[row][col - 1] == 0 || matrixData[row][col - 1] == 1 || matrixData[row][col - 1] == -1)) {
+                
+                newCell.split = true;
               }
-              else if (matrixData[row][col-1] == 2) {
+              else if ((matrixData[row - 1][col] == 2 && matrixData[row][col + 1] == 2) 
+                || (matrixData[row - 1][col] == 2 && matrixData[row][col - 1] == 2) 
+                || (matrixData[row][col - 1] == 2 && matrixData[row][col + 1] == 2)) {
+              
                 newCell.deadEnd = true;
               }
-              else if (row + 1 == rows) {
+              else if (matrixData[row][col - 1] == 2 || matrixData[row][col + 1] == 2){
+                newCell.turn = true;
+              }
+            }
+          }
+          
+          
+          //if we are in the middle=====================================================================================================================================
+          else {
+            if( col == 0 ) {
+              if((matrixData[row + 1][col] == 0 || matrixData[row + 1][col] == 1 || matrixData[row + 1][col] == -1)
+                && (matrixData[row - 1][col] == 0 || matrixData[row - 1][col] == 1 || matrixData[row - 1][col] == -1)
+                && (matrixData[row][col + 1] == 0 || matrixData[row][col + 1] == 1 || matrixData[row][col + 1] == -1)) {
+                newCell.split = true;
+              }
+              else if ((matrixData[row + 1][col] == 2 && matrixData[row][col + 1] == 2) 
+                || (matrixData[row - 1][col] == 2 && matrixData[row][col + 1] == 2) 
+                || (matrixData[row + 1][col] == 2 && matrixData[row - 1][col] == 2)) {
+              
                 newCell.deadEnd = true;
               }
-              else if (matrixData[row+1][col] == 2) {
-                newCell.deadEnd = true;
+              else if (matrixData[row + 1][col] == 2 || matrixData[row - 1][col] == 2) {
+                newCell.turn = true;
+              }
+            }
+            
+            else if ( col == cols - 1) {
+              if((matrixData[row + 1][col] == 0 || matrixData[row + 1][col] == 1 || matrixData[row + 1][col] == -1)
+                && (matrixData[row - 1][col] == 0 || matrixData[row - 1][col] == 1 || matrixData[row - 1][col] == -1)
+                && (matrixData[row][col - 1] == 0 || matrixData[row][col - 1] == 1 || matrixData[row][col - 1] == -1)) {
+                  newCell.split = true;
+              }
+              else if ((matrixData[row + 1][col] == 2 && matrixData[row][col - 1] == 2) 
+                || (matrixData[row - 1][col] == 2 && matrixData[row][col - 1] == 2) 
+                || (matrixData[row + 1][col] == 2 && matrixData[row - 1][col] == 2)) {
+                
+                  newCell.deadEnd = true;
+              }
+              else if (matrixData[row + 1][col] == 2 || matrixData[row - 1][col] == 2) {
+                  newCell.turn = true;
+              }
+            }
+            
+            else {
+              if((matrixData[row + 1][col] == 2 && matrixData[row - 1][col] == 2 && matrixData[row][col - 1] == 2)
+                || (matrixData[row + 1][col] == 2 && matrixData[row - 1][col] == 2 && matrixData[row][col - 1] == 2)
+                || (matrixData[row + 1][col] == 2 && matrixData[row][col + 1] == 2 && matrixData[row][col - 1] == 2)
+                || (matrixData[row - 1][col] == 2 && matrixData[row][col + 1] == 2 && matrixData[row][col - 1] == 2)) {
+                  newCell.deadEnd = true;
+              }
+              
+              else if((matrixData[row + 1][col] == 2 && matrixData[row][col - 1] == 2)
+                || (matrixData[row - 1][col] == 2 && matrixData[row][col - 1] == 2)
+                || (matrixData[row + 1][col] == 2 && matrixData[row][col + 1] == 2)
+                || (matrixData[row - 1][col] == 2 && matrixData[row][col + 1] == 2)) {
+                  
+                  newCell.turn = true;
+              }
+              
+              else if((matrixData[row + 1][col] != 2 || matrixData[row - 1][col] != 2) 
+                && (matrixData[row][col + 1] != 2 || matrixData[row][col - 1] != 2)) {
+                
+                  newCell.split = true;
               }
             }
           }
         }
+        
+        
         //May have to convert to a set , to be able to access in dfs, bfs
         cellsData.add(newCell);
         if (newCell.turn) {
