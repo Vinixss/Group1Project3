@@ -38,28 +38,7 @@ void draw()
     bfs = new BFS(terrain.cellsData, terrain.rows, terrain.cols, terrain.startCoord[0], terrain.startCoord[1]);
     dfs = new DFS(terrain.cellsData, terrain.rows, terrain.cols, terrain.startCoord[0], terrain.startCoord[1]);
   }
-  if (turnBtn.isPressed()) {
-    terrain.reloadGrid();
-    terrain.turnView = !(terrain.turnView);
-  }
-  if (splitBtn.isPressed()) {
-    terrain.reloadGrid();
-    if (terrain.splitView == false) {
-      terrain.splitView = true;
-    }
-    else if (terrain.splitView == true) {
-      terrain.splitView = false;
-    }
-  }
-  if (endBtn.isPressed()) {
-    terrain.reloadGrid();
-    if (terrain.endView == false) {
-      terrain.endView = true;
-    }
-    else if (terrain.endView == true) {
-      terrain.endView = false;
-    }
-  }
+  
   if (bfsBtn.isPressed()) {
     terrain.reloadGrid();
     bfs = new BFS(terrain.cellsData, terrain.rows, terrain.cols, terrain.startCoord[0], terrain.startCoord[1]);
@@ -105,12 +84,15 @@ void keyReleased() {
     dfs.traverse();
   }
   if (key == 't') {
+    terrain.reloadGrid();
     terrain.turnView = !(terrain.turnView);
   }
   if (key == 'e') {
+    terrain.reloadGrid();
     terrain.endView = !(terrain.endView);
   }
   if (key == 'd') {
+    terrain.reloadGrid();
     terrain.splitView = !(terrain.splitView);
   }
 }
@@ -121,4 +103,19 @@ void mouseDragged() {
 
 void mouseWheel(MouseEvent event) {
   orbitCamera.mouseWheel(event);
+}
+
+void mouseReleased() {
+  if(mouseX >= 20 && mouseX <= 100 && mouseY >= 190 && mouseY < 220) {
+    terrain.reloadGrid();
+    terrain.turnView = !(terrain.turnView);
+  }
+  if(mouseX >= 20 && mouseX <= 100 && mouseY >= 220 && mouseY < 250) {
+    terrain.reloadGrid();
+    terrain.splitView = !(terrain.splitView);
+  }
+  if(mouseX >= 20 && mouseX <= 100 && mouseY >= 250 && mouseY <= 280) {
+    terrain.reloadGrid();
+    terrain.endView = !(terrain.endView);
+  }
 }
