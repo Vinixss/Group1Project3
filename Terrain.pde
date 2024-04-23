@@ -144,9 +144,11 @@ class Terrain {
         Cell newCell = new Cell(row - (rows/2), 0, col - (cols/2));
         if (row == startCoord[0] && col == startCoord[1]) {
           newCell.start = true;
+          junctions.addCell(newCell, row, col);
         }
         if (row == targetCoord[0] && col == targetCoord[1]) {
           newCell.target = true;
+          junctions.addCell(newCell, row, col);
         }
         if (matrixData[row][col] == 2) {
           newCell.value = 2;
