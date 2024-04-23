@@ -118,9 +118,13 @@ class Terrain {
     previousDirections.clear();
     
     
-    //Set Start Randomly
+     //Set Start Randomly
     randomCol = random.nextInt(cols);
     randomRow = random.nextInt(rows);
+    while ( matrixData[randomRow][randomCol] == 2 ) {
+      randomCol = random.nextInt(cols);
+      randomRow = random.nextInt(rows);
+    }
     matrixData[randomRow][randomCol] = -1;
     startCoord[0] = randomRow;
     startCoord[1] = randomCol;
@@ -130,6 +134,11 @@ class Terrain {
     //Set End Randomly
     randomCol = random.nextInt(cols);
     randomRow = random.nextInt(rows);
+    while ( matrixData[randomRow][randomCol] == 2 || matrixData[randomRow][randomCol] == -1) {
+      randomCol = random.nextInt(cols);
+      randomRow = random.nextInt(rows);
+    }
+    
     targetCoord[0] = randomRow;
     targetCoord[1] = randomCol;
     matrixData[randomRow][randomCol] = 1;
